@@ -20,8 +20,8 @@ BackendPayload = NamedTuple('BackendPayload', (
 def serialise_payload(payload: BackendPayload) -> bytes:
     return b'$'.join((
         payload.backend_name.encode(),
-        payload.salt,
-        payload.payload,
+        base64.urlsafe_b64encode(payload.salt),
+        base64.urlsafe_b64encode(payload.payload),
     ))
 
 
@@ -29,8 +29,8 @@ def deserialise_payload(serialised_payload: bytes) -> BackendPayload:
     backend_name, salt, payload = serialised_payload.split(b'$')
     return BackendPayload(
         backend_name=backend_name.decode(),
-        salt=salt,
-        payload=payload,
+        salt=base64.urlsafe_b64decode(salt),
+        payload=base64.urlsafe_b64decode(payload),
     )
 
 
@@ -61,7 +61,7 @@ def aes_cbc_pkcs7_backend(password: str, salt: bytes, message: str) -> BackendPa
     return BackendPayload(
         backend_name='aes_cbc',
         salt=salt,
-        payload=base64.urlsafe_b64encode(ct),
+        payload=ct,
     )
 
 
@@ -81,7 +81,7 @@ class Encrypt:
             self,
             message: str,
             salt: Optional[bytes] = None,
-            backend: Callable[[str, bytes, str], BackendPayload] = fernet_backend,
+            backend: Callable[[str, bytes, str], BackendPayload] = aes_cbc_pkcs7_backend,
     ) -> bytes:
         salt = salt or generate_salt()
         payload = backend(self.password, salt, message)
