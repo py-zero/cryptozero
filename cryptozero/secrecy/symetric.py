@@ -1,7 +1,7 @@
 import base64
 import enum
 import os
-from typing import Callable, Optional, NamedTuple
+from typing import Callable, Optional, NamedTuple, Dict
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
@@ -9,6 +9,11 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from cryptozero.key import stretch, pbkdf2_hmac_stretcher
+
+
+class BackendName(str, enum.Enum):
+    AES_CBC = 'aes_cbc'
+    FERNET = 'fernet'
 
 
 BackendPayload = NamedTuple('BackendPayload', (
@@ -66,26 +71,35 @@ def aes_cbc_pkcs7_backend(password: str, salt: bytes, message: str) -> BackendPa
     )
 
 
-class BackendName(str, enum.Enum):
-    AES_CBC = 'aes_cbc'
-    FERNET = 'fernet'
+def fernet_decrypt_backend(password: str, backend_payload: BackendPayload) -> str:
+    key = pbkdf2_hmac_stretcher(password, salt=backend_payload.salt, hash_name='sha256')
+    encoded_key = base64.urlsafe_b64encode(key)
+    f = Fernet(encoded_key)
+    return f.decrypt(backend_payload.payload).decode()
 
 
-def fernet_decrypt_backend(backend_payload: BackendPayload) -> str:
-    pass
-
-
-def aes_cbc_pkcs7_decrypt_backend(backend_payload: BackendPayload) -> str:
-    pass
+def aes_cbc_pkcs7_decrypt_backend(password: str, backend_payload: BackendPayload) -> str:
+    salt = backend_payload.salt
+    key = pbkdf2_hmac_stretcher(password, salt=salt, hash_name='sha256')
+    cipher = Cipher(
+        algorithm=algorithms.AES(key),
+        mode=modes.CBC(salt),
+        backend=default_backend(),
+    )
+    decrypter = cipher.decryptor()
+    padded_message = decrypter.update(backend_payload.payload) + decrypter.finalize()
+    unpadder = PKCS7(cipher.algorithm.block_size).unpadder()
+    message = unpadder.update(padded_message) + unpadder.finalize()
+    return message.decode()
 
 
 DECRYPT_BACKEND_REGISTRY = {
     BackendName.AES_CBC: aes_cbc_pkcs7_decrypt_backend,
     BackendName.FERNET: fernet_decrypt_backend,
-}
+}  # type: Dict[str, Callable[[str, BackendPayload], str]]
 
 
-def get_decrypt_backend(backend_name: str) -> Callable:
+def get_decrypt_backend(backend_name: str) -> Callable[[str, BackendPayload], str]:
     return DECRYPT_BACKEND_REGISTRY[backend_name]
 
 
@@ -125,6 +139,11 @@ class Decrypt:
     @classmethod
     def from_password(cls, password: str) -> 'Decrypt':
         return cls(password)
+
+    def decrypt(self, raw_payload: bytes) -> str:
+        payload = deserialise_payload(raw_payload)
+        backend = get_decrypt_backend(payload.backend_name)
+        return backend(self.password, payload)
 
     def __eq__(self, other: 'Decrypt') -> bool:
         return bool(
