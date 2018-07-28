@@ -9,9 +9,9 @@ DEFAULT_ITERATIONS = 100000
 
 def pbkdf2_hmac_stretcher(
         input_key: str,
-        salt=DEFAULT_SALT,
-        hash_name=DEFAULT_HASH_NAME,
-        iterations=DEFAULT_ITERATIONS,
+        salt: bytes = DEFAULT_SALT,
+        hash_name: str = DEFAULT_HASH_NAME,
+        iterations: int = DEFAULT_ITERATIONS,
 ) -> bytes:
     return hashlib.pbkdf2_hmac(
         hash_name=hash_name,
