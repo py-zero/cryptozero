@@ -1,10 +1,13 @@
 import io
 import os
 import random
+import string
 from tempfile import NamedTemporaryFile
 from typing import IO
 
 import pytest
+
+from cryptozero.key import stretch
 
 
 @pytest.fixture
@@ -56,3 +59,16 @@ def private_key_file_path(private_key) -> str:
     yield file_name
 
     os.unlink(file_name)
+
+
+@pytest.fixture
+def random_password() -> str:
+    return ''.join(
+        random.choice(string.ascii_letters)
+        for _ in range(16)
+    )
+
+
+@pytest.fixture
+def stretched_random_password(random_password: str) -> bytes:
+    return stretch(random_password)
