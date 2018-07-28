@@ -3,6 +3,8 @@ from cryptozero.secrecy.symetric import (
     Decrypt,
     aes_cbc_pkcs7_backend,
     fernet_backend,
+    encrypt,
+    decrypt,
 )
 
 
@@ -72,3 +74,11 @@ def test_decrypt_fernet_from_message(random_password: str):
     decrypted_message = decrypter.decrypt(encrypted_message)
 
     assert secret_message == decrypted_message
+
+
+def test_shortcut_decrypt(random_password: str):
+    secret_message = "this is a secret message"
+    assert secret_message == decrypt(
+        random_password,
+        encrypt(random_password, secret_message)
+    )

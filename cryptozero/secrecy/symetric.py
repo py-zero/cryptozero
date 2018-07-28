@@ -150,3 +150,11 @@ class Decrypt:
             type(self) is type(other)
             and self.password == other.password
         )
+
+
+def encrypt(password: str, message: str) -> bytes:
+    return Encrypt.from_password(password).encrypt(message)
+
+
+def decrypt(password: str, encrypted_message: bytes) -> str:
+    return Decrypt.from_password(password).decrypt(encrypted_message)
