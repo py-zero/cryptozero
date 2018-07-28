@@ -1,4 +1,5 @@
 import base64
+import enum
 import os
 from typing import Callable, Optional, NamedTuple
 
@@ -63,6 +64,29 @@ def aes_cbc_pkcs7_backend(password: str, salt: bytes, message: str) -> BackendPa
         salt=salt,
         payload=ct,
     )
+
+
+class BackendName(str, enum.Enum):
+    AES_CBC = 'aes_cbc'
+    FERNET = 'fernet'
+
+
+def fernet_decrypt_backend(backend_payload: BackendPayload) -> str:
+    pass
+
+
+def aes_cbc_pkcs7_decrypt_backend(backend_payload: BackendPayload) -> str:
+    pass
+
+
+DECRYPT_BACKEND_REGISTRY = {
+    BackendName.AES_CBC: aes_cbc_pkcs7_decrypt_backend,
+    BackendName.FERNET: fernet_decrypt_backend,
+}
+
+
+def get_decrypt_backend(backend_name: str) -> Callable:
+    return DECRYPT_BACKEND_REGISTRY[backend_name]
 
 
 def generate_salt():
