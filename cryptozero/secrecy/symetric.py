@@ -95,20 +95,15 @@ class Encrypt:
 
 
 class Decrypt:
-    def __init__(self, key: bytes) -> None:
-        self.key = key
+    def __init__(self, password: str) -> None:
+        self.password = password
 
     @classmethod
     def from_password(cls, password: str) -> 'Decrypt':
-        key = stretch(password)
-        return cls.from_key(key)
-
-    @classmethod
-    def from_key(cls, key: bytes) -> 'Decrypt':
-        return cls(key)
+        return cls(password)
 
     def __eq__(self, other: 'Decrypt') -> bool:
         return bool(
             type(self) is type(other)
-            and self.key == other.key
+            and self.password == other.password
         )
