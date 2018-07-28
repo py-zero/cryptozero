@@ -19,6 +19,12 @@ class Encrypt:
         with open(key_path, 'rb') as key_file:
             return cls.from_public_key_file(key_file)
 
+    def __eq__(self, other: 'Encrypt') -> bool:
+        return bool(
+            type(self) is type(other)
+            and self.public_key == other.public_key
+        )
+
 
 class Decrypt:
     def __init__(self, private_key: bytes) -> None:
@@ -36,3 +42,9 @@ class Decrypt:
     def from_private_key_path(cls, key_path: str) -> 'Decrypt':
         with open(key_path, 'rb') as key_file:
             return cls.from_private_key_file(key_file)
+
+    def __eq__(self, other: 'Decrypt') -> bool:
+        return bool(
+            type(self) is type(other)
+            and self.private_key == other.private_key
+        )
