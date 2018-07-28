@@ -1,4 +1,9 @@
-from cryptozero.secrecy.symetric import BackendPayload, aes_cbc_pkcs7_decrypt_backend, fernet_decrypt_backend
+from cryptozero.secrecy.symetric import (
+    BackendPayload, aes_cbc_pkcs7_decrypt_backend, fernet_decrypt_backend, Encrypt,
+    Decrypt,
+    aes_cbc_pkcs7_backend,
+    fernet_backend,
+)
 
 
 def test_aes_decrypt():
@@ -27,3 +32,43 @@ def test_fernet_decrypt():
     )
     response_message = fernet_decrypt_backend(password, payload)
     assert expected_message == response_message
+
+
+# we can assume that encryption is going to work in these tests
+def test_decrypt_default_from_message(random_password: str):
+    secret_message = "this is a secret message"
+    encrypter = Encrypt.from_password(random_password)
+    encrypted_message = encrypter.encrypt(secret_message)
+
+    decrypter = Decrypt.from_password(random_password)
+    decrypted_message = decrypter.decrypt(encrypted_message)
+
+    assert secret_message == decrypted_message
+
+
+def test_decrypt_aes_from_message(random_password: str):
+    secret_message = "this is a secret message"
+    encrypter = Encrypt.from_password(random_password)
+    encrypted_message = encrypter.encrypt(
+        secret_message,
+        backend=aes_cbc_pkcs7_backend,
+    )
+
+    decrypter = Decrypt.from_password(random_password)
+    decrypted_message = decrypter.decrypt(encrypted_message)
+
+    assert secret_message == decrypted_message
+
+
+def test_decrypt_fernet_from_message(random_password: str):
+    secret_message = "this is a secret message"
+    encrypter = Encrypt.from_password(random_password)
+    encrypted_message = encrypter.encrypt(
+        secret_message,
+        backend=fernet_backend,
+    )
+
+    decrypter = Decrypt.from_password(random_password)
+    decrypted_message = decrypter.decrypt(encrypted_message)
+
+    assert secret_message == decrypted_message
