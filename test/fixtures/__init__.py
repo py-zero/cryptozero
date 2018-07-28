@@ -8,12 +8,17 @@ import pytest
 
 
 @pytest.fixture
-def public_key() -> bytes:
+def random_key() -> bytes:
     # we don't intend this to be secure, so we'll use `randbits`
     return bytes(bytearray(
         random.getrandbits(8)
         for _ in range(1024)
     ))
+
+
+@pytest.fixture
+def public_key(random_key) -> bytes:
+    return random_key
 
 
 @pytest.fixture
@@ -33,12 +38,8 @@ def public_key_file_path(public_key) -> str:
 
 
 @pytest.fixture
-def private_key() -> bytes:
-    # we don't intend this to be secure, so we'll use `randbits`
-    return bytes(bytearray(
-        random.getrandbits(8)
-        for _ in range(1024)
-    ))
+def private_key(random_key) -> bytes:
+    return random_key
 
 
 @pytest.fixture
