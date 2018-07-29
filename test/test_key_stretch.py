@@ -47,3 +47,12 @@ def test_sensible_defaults_for_hmac_used():
         iterations=iterations,
     )
     assert expected_stretched == stretch(password)
+
+
+def test_salt_is_passed_to_backend(mocker):
+    fake_backend = mocker.Mock()
+    stretch('', salt=b'some salt', stretcher=fake_backend)
+    fake_backend.assert_called_once_with(
+        '',
+        salt=b'some salt',
+    )
