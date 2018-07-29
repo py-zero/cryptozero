@@ -13,10 +13,7 @@ from cryptozero.key import stretch
 @pytest.fixture
 def random_key() -> bytes:
     # we don't intend this to be secure, so we'll use `randbits`
-    return bytes(bytearray(
-        random.getrandbits(8)
-        for _ in range(1024)
-    ))
+    return bytes(bytearray(random.getrandbits(8) for _ in range(1024)))
 
 
 @pytest.fixture
@@ -63,10 +60,7 @@ def private_key_file_path(private_key) -> str:
 
 @pytest.fixture
 def random_password() -> str:
-    return ''.join(
-        random.choice(string.ascii_letters)
-        for _ in range(16)
-    )
+    return "".join(random.choice(string.ascii_letters) for _ in range(16))
 
 
 @pytest.fixture
