@@ -1,4 +1,4 @@
-from cryptozero.secrecy.symetric import Encrypt
+from cryptozero.secrecy.symmetric import Encrypt
 
 
 def test_init(random_password):

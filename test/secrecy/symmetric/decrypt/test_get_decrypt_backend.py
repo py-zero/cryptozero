@@ -1,6 +1,6 @@
 import types
 
-from cryptozero.secrecy.symetric import (
+from cryptozero.secrecy.symmetric import (
     get_decrypt_backend, BackendPayload, BackendName, aes_cbc_pkcs7_decrypt_backend,
     fernet_decrypt_backend,
 )

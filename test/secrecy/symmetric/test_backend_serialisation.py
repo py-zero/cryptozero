@@ -1,4 +1,4 @@
-from cryptozero.secrecy.symetric import BackendPayload, serialise_payload, deserialise_payload
+from cryptozero.secrecy.symmetric import BackendPayload, serialise_payload, deserialise_payload
 
 
 def test_serialise_blank_payload():

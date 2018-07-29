@@ -1,6 +1,6 @@
 import inspect
 
-from cryptozero.secrecy.symetric import Encrypt, aes_cbc_pkcs7_backend, BackendPayload
+from cryptozero.secrecy.symmetric import Encrypt, aes_cbc_pkcs7_backend, BackendPayload
 
 
 def test_default_encrypt_backend_is_aes():

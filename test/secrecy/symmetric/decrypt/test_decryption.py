@@ -1,4 +1,4 @@
-from cryptozero.secrecy.symetric import (
+from cryptozero.secrecy.symmetric import (
     BackendPayload, aes_cbc_pkcs7_decrypt_backend, fernet_decrypt_backend, Encrypt,
     Decrypt,
     aes_cbc_pkcs7_backend,

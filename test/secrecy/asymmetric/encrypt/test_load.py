@@ -1,6 +1,6 @@
 from typing import IO
 
-from cryptozero.secrecy.asymetric import Encrypt
+from cryptozero.secrecy.asymmetric import Encrypt
 
 
 def test_init_sets_public_key(public_key: bytes):
