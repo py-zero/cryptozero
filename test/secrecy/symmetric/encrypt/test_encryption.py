@@ -1,6 +1,6 @@
 import inspect
 
-from cryptozero.secrecy.symmetric import Encrypt, aes_cbc_pkcs7_backend, BackendPayload
+from cryptozero.secrecy.symmetric import Encrypt, aes_cbc_pkcs7_backend, BackendPayload, BackendName
 
 
 def test_default_encrypt_backend_is_aes():
@@ -33,7 +33,7 @@ def test_aes_encrypt():
     # This is a verified gen of AES CBC PKCS7, using pbkdf2 hmac, with sha256 at 100k iterations.
     # It will need regenerating if we change iteration count
     expected_payload = BackendPayload(
-        backend_name='aes_cbc',
+        backend_name=BackendName.AES_CBC,
         salt=b'1234567890123456',  # 16 bytes
         payload=b'\x1cD\xb9\xd9e\x94R)\x19I_M\\\x95\xce\x9a'
     )

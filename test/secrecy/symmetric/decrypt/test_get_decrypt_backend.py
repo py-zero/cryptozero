@@ -7,12 +7,12 @@ from cryptozero.secrecy.symmetric import (
 
 
 def test_takes_backend_name():
-    backend_name = 'aes_cbc'
+    backend_name = BackendName.AES_CBC
     get_decrypt_backend(backend_name=backend_name)
 
 
 def test_returns_decrypt_backend():
-    backend_name = 'aes_cbc'
+    backend_name = BackendName.AES_CBC
     backend = get_decrypt_backend(backend_name)
     assert isinstance(backend, types.FunctionType)
 

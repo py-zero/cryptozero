@@ -11,13 +11,17 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from cryptozero.key import stretch, pbkdf2_hmac_stretcher
 
 
+@enum.unique
 class BackendName(str, enum.Enum):
     AES_CBC = 'aes_cbc'
     FERNET = 'fernet'
 
+    def __str__(self) -> str:
+        return self.value
+
 
 BackendPayload = NamedTuple('BackendPayload', (
-    ('backend_name', str),
+    ('backend_name', BackendName),
     ('salt', bytes),
     ('payload', bytes),
 ))
@@ -34,7 +38,7 @@ def serialise_payload(payload: BackendPayload) -> bytes:
 def deserialise_payload(serialised_payload: bytes) -> BackendPayload:
     backend_name, salt, payload = serialised_payload.split(b'$')
     return BackendPayload(
-        backend_name=backend_name.decode(),
+        backend_name=BackendName(backend_name.decode()),
         salt=base64.urlsafe_b64decode(salt),
         payload=base64.urlsafe_b64decode(payload),
     )
@@ -46,7 +50,7 @@ def fernet_backend(password: str, salt: bytes, message: str) -> BackendPayload:
     f = Fernet(encoded_key)
     payload = f.encrypt(message.encode())
     return BackendPayload(
-        backend_name='fernet',
+        backend_name=BackendName.FERNET,
         salt=salt,
         payload=payload,
     )
@@ -65,7 +69,7 @@ def aes_cbc_pkcs7_backend(password: str, salt: bytes, message: str) -> BackendPa
     ct = encryptor.update(padded_data) + encryptor.finalize()
 
     return BackendPayload(
-        backend_name='aes_cbc',
+        backend_name=BackendName.AES_CBC,
         salt=salt,
         payload=ct,
     )
