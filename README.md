@@ -30,9 +30,9 @@ that it is slow to compute. This is also called `hashing`.
 An example would be taking the password `passw0rd`, and turning it into a series of bytes.
 
 ```python
->>> from cryptozero.key import stretch
->>> import base64
->>> base64.urlsafe_b64encode(stretch('passw0rd'))
+from cryptozero.key import stretch
+import base64
+base64.urlsafe_b64encode(stretch('passw0rd'))
 b'5ORsO6IvsHoxPXcaLRfe5Lx2Rt25apdJai9W7PGesBY='
 ```
 We've use base64 as a nice way of showing the output.
