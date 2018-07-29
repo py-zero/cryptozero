@@ -1,0 +1,28 @@
+environment:
+  matrix:
+    - PYTHON: "C:\\Python35"
+      TOX_ENV: "py35"
+
+    - PYTHON: "C:\\Python36"
+      TOX_ENV: "py36"
+
+    - PYTHON: "C:\\Python37"
+      TOX_ENV: "py37"
+
+    - PYTHON: "C:\\Python35-x64"
+      TOX_ENV: "py35"
+
+    - PYTHON: "C:\\Python36-x64"
+      TOX_ENV: "py36"
+
+    - PYTHON: "C:\\Python37-x64"
+      TOX_ENV: "py37"
+
+install:
+  - "%PYTHON%\\python.exe -m pip install -U pip wheel setuptools"
+  - "%PYTHON%\\python.exe -m pip install -U tox"
+
+build: false
+
+test_script:
+  - "%PYTHON%\\python.exe -m tox -e %TOX_ENV%"
