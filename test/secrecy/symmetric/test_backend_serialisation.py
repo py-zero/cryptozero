@@ -71,3 +71,8 @@ def test_deserialise_payload_body():
         payload=b'5678',
     )
     assert expected == deserialise_payload(input)
+
+
+def test_backend_name_is_serialisable():
+    expected_name = 'aes_cbc'
+    assert expected_name == str(BackendName.AES_CBC)
